@@ -78,6 +78,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     IdentifierUris            = 'https://app.contoso.com'
                     KnownClientApplications   = ''
                     LogoutURL                 = 'https://app.contoso.com/logout'
+                    Notes                     = 'Test notes'
                     PublicClient              = $false
                     ReplyURLs                 = @('https://app.contoso.com')
                     Ensure                    = 'Present'
@@ -113,6 +114,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     IdentifierUris            = 'https://app.contoso.com'
                     KnownClientApplications   = ''
                     LogoutURL                 = 'https://app.contoso.com/logout'
+                    Notes                     = 'Test notes'
                     PublicClient              = $false
                     ReplyURLs                 = 'https://app.contoso.com'
                     Ensure                    = 'Absent'
@@ -129,6 +131,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     $AADApp | Add-Member -MemberType NoteProperty -Name IdentifierUris -Value 'https://app.contoso.com'
                     $AADApp | Add-Member -MemberType NoteProperty -Name KnownClientApplications -Value ''
                     $AADApp | Add-Member -MemberType NoteProperty -Name LogoutURL -Value 'https://app.contoso.com/logout'
+                    $AADApp | Add-Member -MemberType NoteProperty -Name Notes -Value 'Test notes'
                     $AADApp | Add-Member -MemberType NoteProperty -Name Oauth2RequirePostResponse -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name PublicClient -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name ReplyURLs -Value 'https://app.contoso.com'
@@ -161,6 +164,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     IdentifierUris            = 'https://app.contoso.com'
                     KnownClientApplications   = ''
                     LogoutURL                 = 'https://app.contoso.com/logout'
+                    Notes                     = 'Test notes'
                     PublicClient              = $false
                     ReplyURLs                 = 'https://app.contoso.com'
                     Ensure                    = 'Present'
@@ -178,6 +182,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                         LogoutURL    = 'https://app.contoso.com/logout'
                         RedirectUris = @('https://app.contoso.com')
                     }
+                    $AADApp | Add-Member -MemberType NoteProperty -Name Notes -Value 'Test notes'
                     $AADApp | Add-Member -MemberType NoteProperty -Name IdentifierUris -Value 'https://app.contoso.com'
                     $AADApp | Add-Member -MemberType NoteProperty -Name API -Value @{
                         KnownClientApplications = ''
@@ -208,6 +213,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     IdentifierUris            = 'https://app.contoso.com'
                     KnownClientApplications   = ''
                     LogoutURL                 = 'https://app.contoso.com/logout'
+                    Notes                     = 'Test notes'
                     PublicClient              = $false
                     ReplyURLs                 = 'https://app.contoso.com'
                     Ensure                    = 'Present'
@@ -224,6 +230,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     $AADApp | Add-Member -MemberType NoteProperty -Name IdentifierUris -Value 'https://app.contoso.com'
                     $AADApp | Add-Member -MemberType NoteProperty -Name KnownClientApplications -Value ''
                     $AADApp | Add-Member -MemberType NoteProperty -Name LogoutURL -Value 'https://app.contoso.com/logout'
+                    $AADApp | Add-Member -MemberType NoteProperty -Name Notes -Value 'Test notes'
                     $AADApp | Add-Member -MemberType NoteProperty -Name Oauth2RequirePostResponse -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name PublicClient -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name ReplyURLs -Value 'https://app.contoso.com'
@@ -255,6 +262,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     IdentifierUris            = 'https://app.contoso.com'
                     KnownClientApplications   = ''
                     LogoutURL                 = 'https://app.contoso.com/logout'
+                    Notes                     = 'Test notes'
                     PublicClient              = $false
                     ReplyURLs                 = 'https://app.contoso.com'
                     Permissions               = @(New-CimInstance -ClassName MSFT_AADApplicationPermission -Property @{
@@ -318,6 +326,7 @@ Describe -Name $Global:DscHelper.DescribeHeader -Fixture {
                     $AADApp | Add-Member -MemberType NoteProperty -Name IdentifierUris -Value 'https://app.contoso.com'
                     $AADApp | Add-Member -MemberType NoteProperty -Name KnownClientApplications -Value ''
                     $AADApp | Add-Member -MemberType NoteProperty -Name LogoutURL -Value 'https://app.contoso.com/logout'
+                    $AADApp | Add-Member -MemberType NoteProperty -Name Notes -Value 'Test notes'
                     $AADApp | Add-Member -MemberType NoteProperty -Name Oauth2RequirePostResponse -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name PublicClient -Value $false
                     $AADApp | Add-Member -MemberType NoteProperty -Name ReplyURLs -Value 'https://app.contoso.com'

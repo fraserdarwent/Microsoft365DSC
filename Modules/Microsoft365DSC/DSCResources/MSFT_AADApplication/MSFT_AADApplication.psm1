@@ -41,6 +41,10 @@ function Get-TargetResource
         $LogoutURL,
 
         [Parameter()]
+        [System.String]
+        $Notes,
+
+        [Parameter()]
         [System.String[]]
         $KnownClientApplications,
 
@@ -195,6 +199,7 @@ function Get-TargetResource
                 IsFallbackPublicClient  = $IsFallbackPublicClientValue
                 KnownClientApplications = $AADApp.Api.KnownClientApplications
                 LogoutURL               = $AADApp.web.LogoutURL
+                Notes                   = [System.String]$AADApp.Notes
                 PublicClient            = $isPublicClient
                 ReplyURLs               = $AADApp.web.RedirectUris
                 Owners                  = $OwnersValues
@@ -276,6 +281,10 @@ function Set-TargetResource
         [Parameter()]
         [System.String]
         $LogoutURL,
+
+        [Parameter()]
+        [System.String]
+        $Notes,
 
         [Parameter()]
         [System.Boolean]
@@ -705,6 +714,10 @@ function Test-TargetResource
         [Parameter()]
         [System.String]
         $LogoutURL,
+
+        [Parameter()]
+        [System.String]
+        $Notes,
 
         [Parameter()]
         [System.Boolean]
