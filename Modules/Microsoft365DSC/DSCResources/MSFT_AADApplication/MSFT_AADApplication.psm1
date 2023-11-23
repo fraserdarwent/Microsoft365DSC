@@ -45,6 +45,11 @@ function Get-TargetResource
         $KnownClientApplications,
 
         [Parameter()]
+        [ValidateSet(1, 2)]
+        [System.Int32]
+        $RequestedAccessTokenVersion,
+
+        [Parameter()]
         [System.Boolean]
         $PublicClient = $false,
 
@@ -186,28 +191,36 @@ function Get-TargetResource
             {
                 $IsFallbackPublicClientValue = $AADApp.IsFallbackPublicClient
             }
+
+            $RequestedAccessTokenVersion = 1
+            if ($AADApp.Api.RequestedAccessTokenVersion)
+            {
+                $RequestedAccessTokenVersion = $AADApp.Api.RequestedAccessTokenVersion
+            }
+
             $result = @{
-                DisplayName             = $AADApp.DisplayName
-                AvailableToOtherTenants = $AvailableToOtherTenantsValue
-                GroupMembershipClaims   = $AADApp.GroupMembershipClaims
-                Homepage                = $AADApp.web.HomepageUrl
-                IdentifierUris          = $AADApp.IdentifierUris
-                IsFallbackPublicClient  = $IsFallbackPublicClientValue
-                KnownClientApplications = $AADApp.Api.KnownClientApplications
-                LogoutURL               = $AADApp.web.LogoutURL
-                PublicClient            = $isPublicClient
-                ReplyURLs               = $AADApp.web.RedirectUris
-                Owners                  = $OwnersValues
-                ObjectId                = $AADApp.Id
-                AppId                   = $AADApp.AppId
-                Permissions             = $permissionsObj
-                Ensure                  = 'Present'
-                Credential              = $Credential
-                ApplicationId           = $ApplicationId
-                TenantId                = $TenantId
-                ApplicationSecret       = $ApplicationSecret
-                CertificateThumbprint   = $CertificateThumbprint
-                Managedidentity         = $ManagedIdentity.IsPresent
+                DisplayName                 = $AADApp.DisplayName
+                AvailableToOtherTenants     = $AvailableToOtherTenantsValue
+                GroupMembershipClaims       = $AADApp.GroupMembershipClaims
+                Homepage                    = $AADApp.web.HomepageUrl
+                IdentifierUris              = $AADApp.IdentifierUris
+                IsFallbackPublicClient      = $IsFallbackPublicClientValue
+                KnownClientApplications     = $AADApp.Api.KnownClientApplications
+                RequestedAccessTokenVersion = $RequestedAccessTokenVersion
+                LogoutURL                   = $AADApp.web.LogoutURL
+                PublicClient                = $isPublicClient
+                ReplyURLs                   = $AADApp.web.RedirectUris
+                Owners                      = $OwnersValues
+                ObjectId                    = $AADApp.Id
+                AppId                       = $AADApp.AppId
+                Permissions                 = $permissionsObj
+                Ensure                      = 'Present'
+                Credential                  = $Credential
+                ApplicationId               = $ApplicationId
+                TenantId                    = $TenantId
+                ApplicationSecret           = $ApplicationSecret
+                CertificateThumbprint       = $CertificateThumbprint
+                Managedidentity             = $ManagedIdentity.IsPresent
             }
             Write-Verbose -Message "Get-TargetResource Result: `n $(Convert-M365DscHashtableToString -Hashtable $result)"
             return $result
@@ -268,6 +281,11 @@ function Set-TargetResource
         [Parameter()]
         [System.String[]]
         $KnownClientApplications,
+
+        [Parameter()]
+        [ValidateSet(1, 2)]
+        [System.Int32]
+        $RequestedAccessTokenVersion,
 
         [Parameter()]
         [System.Boolean]
@@ -399,18 +417,22 @@ function Set-TargetResource
     $currentParameters.Remove('AvailableToOtherTenants') | Out-Null
     $currentParameters.Remove('PublicClient') | Out-Null
 
-    if ($currentParameters.KnownClientApplications)
+    if ($currentParameters.RequestedAccessTokenVersion -or $currentParameters.KnownClientApplications)
     {
-        $apiValue = @{
-            KnownClientApplications = $currentParameters.KnownClientApplications
+        $apiValue = @{}
+        if ($currentParameters.RequestedAccessTokenVersion)
+        {
+            $apiValue.Add('RequestedAccessTokenVersion', $currentParameters.RequestedAccessTokenVersion)
+        }
+        if ($currentParameters.KnownClientApplications)
+        {
+            $apiValue.Add('KnownClientApplications', $currentParameters.KnownClientApplications)
         }
         $currentParameters.Add('Api', $apiValue)
-        $currentParameters.Remove('KnownClientApplications') | Out-Null
     }
-    else
-    {
-        $currentParameters.Remove('KnownClientApplications') | Out-Null
-    }
+
+    $currentParameters.Remove('RequestedAccessTokenVersion') | Out-Null
+    $currentParameters.Remove('KnownClientApplications') | Out-Null
 
     if ($ReplyUrls -or $LogoutURL -or $Homepage)
     {
@@ -629,7 +651,7 @@ function Set-TargetResource
                     if ($null -eq $role)
                     {
                         $ObjectGuid = [System.Guid]::empty
-                        if ([System.Guid]::TryParse($permission.Name,[System.Management.Automation.PSReference]$ObjectGuid))
+                        if ([System.Guid]::TryParse($permission.Name, [System.Management.Automation.PSReference]$ObjectGuid))
                         {
                             $roleId = $permission.Name
                         }
@@ -701,6 +723,11 @@ function Test-TargetResource
         [Parameter()]
         [System.String[]]
         $KnownClientApplications,
+
+        [Parameter()]
+        [ValidateSet(1, 2)]
+        [System.Int32]
+        $RequestedAccessTokenVersion,
 
         [Parameter()]
         [System.String]
@@ -1014,7 +1041,7 @@ function Get-M365DSCAzureADAppPermissions
                 if ($null -eq $role)
                 {
                     $ObjectGuid = [System.Guid]::empty
-                    if ([System.Guid]::TryParse($resourceAccess.Id,[System.Management.Automation.PSReference]$ObjectGuid))
+                    if ([System.Guid]::TryParse($resourceAccess.Id, [System.Management.Automation.PSReference]$ObjectGuid))
                     {
                         $roleValue = $resourceAccess.Id
                     }

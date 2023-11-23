@@ -13,6 +13,7 @@
 | **IdentifierUris** | Write | StringArray[] | User-defined URI(s) that uniquely identify a Web application within its Azure AD tenant, or within a verified custom domain. | |
 | **IsFallbackPublicClient** | Write | Boolean | Specifies the fallback application type as public client, such as an installed application running on a mobile device. The default value is false, which means the fallback application type is confidential client such as web app. There are certain scenarios where Microsoft Entra ID cannot determine the client application type (for example, ROPC flow where it is configured without specifying a redirect URI). In those cases, Microsoft Entra ID will interpret the application type based on the value of this property. | |
 | **KnownClientApplications** | Write | StringArray[] | Client applications that are tied to this resource application. | |
+| **RequestedAccessTokenVersion** | Write | Int32 | Specifies the access token version expected by this resource. |`1`, `2`|
 | **LogoutURL** | Write | String | The logout url for this application. | |
 | **PublicClient** | Write | Boolean | Specifies whether this application is a public client (such as an installed application running on a mobile device). Default is false. | |
 | **ReplyURLs** | Write | StringArray[] | Specifies the URLs that user tokens are sent to for sign in, or the redirect URIs that OAuth 2.0 authorization codes and access tokens are sent to. | |
@@ -88,15 +89,16 @@ Configuration Example
     {
         AADApplication 'AADApp1'
         {
-            DisplayName               = "AppDisplayName"
-            AvailableToOtherTenants   = $false
-            GroupMembershipClaims     = "0"
-            Homepage                  = "https://app.contoso.com"
-            IdentifierUris            = "https://app.contoso.com"
-            KnownClientApplications   = ""
-            LogoutURL                 = "https://app.contoso.com/logout"
-            PublicClient              = $false
-            ReplyURLs                 = "https://app.contoso.com"
+            DisplayName                 = "AppDisplayName"
+            AvailableToOtherTenants     = $false
+            GroupMembershipClaims       = "0"
+            Homepage                    = "https://app.contoso.com"
+            IdentifierUris              = "https://app.contoso.com"
+            KnownClientApplications     = ""
+            LogoutURL                   = "https://app.contoso.com/logout"
+            PublicClient                = $false
+            ReplyURLs                   = "https://app.contoso.com"
+            RequestedAccessTokenVersion = 1;
             Permissions               = @(
                 MSFT_AADApplicationPermission
                 {
