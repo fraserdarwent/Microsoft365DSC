@@ -13,6 +13,7 @@
 | **IdentifierUris** | Write | StringArray[] | User-defined URI(s) that uniquely identify a Web application within its Azure AD tenant, or within a verified custom domain. | |
 | **IsFallbackPublicClient** | Write | Boolean | Specifies the fallback application type as public client, such as an installed application running on a mobile device. The default value is false, which means the fallback application type is confidential client such as web app. There are certain scenarios where Microsoft Entra ID cannot determine the client application type (for example, ROPC flow where it is configured without specifying a redirect URI). In those cases, Microsoft Entra ID will interpret the application type based on the value of this property. | |
 | **KnownClientApplications** | Write | StringArray[] | Client applications that are tied to this resource application. | |
+| **AcceptMappedClaims** | Write | Boolean | Allows an application to use claims mapping without specifying a custom signing key. | |
 | **LogoutURL** | Write | String | The logout url for this application. | |
 | **PublicClient** | Write | Boolean | Specifies whether this application is a public client (such as an installed application running on a mobile device). Default is false. | |
 | **ReplyURLs** | Write | StringArray[] | Specifies the URLs that user tokens are sent to for sign in, or the redirect URIs that OAuth 2.0 authorization codes and access tokens are sent to. | |
@@ -94,6 +95,7 @@ Configuration Example
             Homepage                  = "https://app.contoso.com"
             IdentifierUris            = "https://app.contoso.com"
             KnownClientApplications   = ""
+            AcceptMappedClaims        = $false
             LogoutURL                 = "https://app.contoso.com/logout"
             PublicClient              = $false
             ReplyURLs                 = "https://app.contoso.com"

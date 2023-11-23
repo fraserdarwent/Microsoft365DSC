@@ -19,6 +19,7 @@ class MSFT_AADApplication : OMI_BaseResource
     [Write, Description("User-defined URI(s) that uniquely identify a Web application within its Azure AD tenant, or within a verified custom domain.")] string IdentifierUris[];
     [Write, Description("Specifies the fallback application type as public client, such as an installed application running on a mobile device. The default value is false, which means the fallback application type is confidential client such as web app. There are certain scenarios where Microsoft Entra ID cannot determine the client application type (for example, ROPC flow where it is configured without specifying a redirect URI). In those cases, Microsoft Entra ID will interpret the application type based on the value of this property.")] Boolean IsFallbackPublicClient;
     [Write, Description("Client applications that are tied to this resource application.")] string KnownClientApplications[];
+    [Write, Description("Allows an application to use claims mapping without specifying a custom signing key.")] Boolean AcceptMappedClaims;
     [Write, Description("The logout url for this application.")] string LogoutURL;
     [Write, Description("Specifies whether this application is a public client (such as an installed application running on a mobile device). Default is false.")] Boolean PublicClient;
     [Write, Description("Specifies the URLs that user tokens are sent to for sign in, or the redirect URIs that OAuth 2.0 authorization codes and access tokens are sent to.")] String ReplyURLs[];

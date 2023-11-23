@@ -46,6 +46,10 @@ function Get-TargetResource
 
         [Parameter()]
         [System.Boolean]
+        $AcceptMappedClaims,
+
+        [Parameter()]
+        [System.Boolean]
         $PublicClient = $false,
 
         [Parameter()]
@@ -194,6 +198,7 @@ function Get-TargetResource
                 IdentifierUris          = $AADApp.IdentifierUris
                 IsFallbackPublicClient  = $IsFallbackPublicClientValue
                 KnownClientApplications = $AADApp.Api.KnownClientApplications
+                AcceptMappedClaims      = $AADApp.Api.AcceptMappedClaims
                 LogoutURL               = $AADApp.web.LogoutURL
                 PublicClient            = $isPublicClient
                 ReplyURLs               = $AADApp.web.RedirectUris
@@ -268,6 +273,10 @@ function Set-TargetResource
         [Parameter()]
         [System.String[]]
         $KnownClientApplications,
+
+        [Parameter()]
+        [System.Boolean]
+        $AcceptMappedClaims,
 
         [Parameter()]
         [System.Boolean]
@@ -399,18 +408,23 @@ function Set-TargetResource
     $currentParameters.Remove('AvailableToOtherTenants') | Out-Null
     $currentParameters.Remove('PublicClient') | Out-Null
 
-    if ($currentParameters.KnownClientApplications)
+    if ($currentParameters.AcceptMappedClaims -or $currentParameters.KnownClientApplications)
     {
-        $apiValue = @{
-            KnownClientApplications = $currentParameters.KnownClientApplications
+        $apiValue = @{}
+        if ($currentParameters.AcceptMappedClaims)
+        {
+            $apiValue.Add('AcceptMappedClaims', $currentParameters.AcceptMappedClaims)
+        }
+        if ($currentParameters.KnownClientApplications)
+        {
+            $apiValue.Add('KnownClientApplications', $currentParameters.KnownClientApplications)
         }
         $currentParameters.Add('Api', $apiValue)
-        $currentParameters.Remove('KnownClientApplications') | Out-Null
     }
-    else
-    {
-        $currentParameters.Remove('KnownClientApplications') | Out-Null
-    }
+
+    $currentParameters.Remove('KnownClientApplications') | Out-Null
+    $currentParameters.Remove('AcceptMappedClaims') | Out-Null
+
 
     if ($ReplyUrls -or $LogoutURL -or $Homepage)
     {
@@ -629,7 +643,7 @@ function Set-TargetResource
                     if ($null -eq $role)
                     {
                         $ObjectGuid = [System.Guid]::empty
-                        if ([System.Guid]::TryParse($permission.Name,[System.Management.Automation.PSReference]$ObjectGuid))
+                        if ([System.Guid]::TryParse($permission.Name, [System.Management.Automation.PSReference]$ObjectGuid))
                         {
                             $roleId = $permission.Name
                         }
@@ -701,6 +715,10 @@ function Test-TargetResource
         [Parameter()]
         [System.String[]]
         $KnownClientApplications,
+
+        [Parameter()]
+        [System.Boolean]
+        $AcceptMappedClaims,
 
         [Parameter()]
         [System.String]
@@ -1014,7 +1032,7 @@ function Get-M365DSCAzureADAppPermissions
                 if ($null -eq $role)
                 {
                     $ObjectGuid = [System.Guid]::empty
-                    if ([System.Guid]::TryParse($resourceAccess.Id,[System.Management.Automation.PSReference]$ObjectGuid))
+                    if ([System.Guid]::TryParse($resourceAccess.Id, [System.Management.Automation.PSReference]$ObjectGuid))
                     {
                         $roleValue = $resourceAccess.Id
                     }
