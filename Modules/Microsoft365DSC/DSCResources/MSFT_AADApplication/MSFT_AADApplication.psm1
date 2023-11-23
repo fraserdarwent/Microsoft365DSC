@@ -190,6 +190,13 @@ function Get-TargetResource
             {
                 $IsFallbackPublicClientValue = $AADApp.IsFallbackPublicClient
             }
+
+            $AcceptMappedClaims = $false
+            if ($AADApp.Api.AcceptMappedClaims)
+            {
+                $AcceptMappedClaims = $AADApp.Api.AcceptMappedClaims
+            }
+
             $result = @{
                 DisplayName             = $AADApp.DisplayName
                 AvailableToOtherTenants = $AvailableToOtherTenantsValue
@@ -198,7 +205,7 @@ function Get-TargetResource
                 IdentifierUris          = $AADApp.IdentifierUris
                 IsFallbackPublicClient  = $IsFallbackPublicClientValue
                 KnownClientApplications = $AADApp.Api.KnownClientApplications
-                AcceptMappedClaims      = $AADApp.Api.AcceptMappedClaims
+                AcceptMappedClaims      = $AcceptMappedClaims
                 LogoutURL               = $AADApp.web.LogoutURL
                 PublicClient            = $isPublicClient
                 ReplyURLs               = $AADApp.web.RedirectUris
@@ -424,7 +431,6 @@ function Set-TargetResource
 
     $currentParameters.Remove('KnownClientApplications') | Out-Null
     $currentParameters.Remove('AcceptMappedClaims') | Out-Null
-
 
     if ($ReplyUrls -or $LogoutURL -or $Homepage)
     {
