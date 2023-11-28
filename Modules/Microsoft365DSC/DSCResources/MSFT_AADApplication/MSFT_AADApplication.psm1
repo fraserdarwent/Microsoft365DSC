@@ -53,6 +53,10 @@ function Get-TargetResource
         $ReplyURLs,
 
         [Parameter()]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $AppRoles,
+
+        [Parameter()]
         [System.String[]]
         $Owners,
 
@@ -116,7 +120,7 @@ function Get-TargetResource
             {
                 if ($null -ne $Script:exportedInstances -and $Script:ExportMode)
                 {
-                    $AADApp = $Script:exportedInstances | Where-Object -FilterScript {$_.Id -eq $AppId}
+                    $AADApp = $Script:exportedInstances | Where-Object -FilterScript { $_.Id -eq $AppId }
                 }
                 else
                 {
@@ -135,7 +139,7 @@ function Get-TargetResource
 
             if ($null -ne $Script:exportedInstances -and $Script:ExportMode)
             {
-                $AADApp = $Script:exportedInstances | Where-Object -FilterScript {$_.DisplayName -eq $DisplayName}
+                $AADApp = $Script:exportedInstances | Where-Object -FilterScript { $_.DisplayName -eq $DisplayName }
             }
             else
             {
@@ -186,6 +190,7 @@ function Get-TargetResource
             {
                 $IsFallbackPublicClientValue = $AADApp.IsFallbackPublicClient
             }
+
             $result = @{
                 DisplayName             = $AADApp.DisplayName
                 AvailableToOtherTenants = $AvailableToOtherTenantsValue
@@ -197,6 +202,7 @@ function Get-TargetResource
                 LogoutURL               = $AADApp.web.LogoutURL
                 PublicClient            = $isPublicClient
                 ReplyURLs               = $AADApp.web.RedirectUris
+                AppRoles                = $AADApp.AppRoles
                 Owners                  = $OwnersValues
                 ObjectId                = $AADApp.Id
                 AppId                   = $AADApp.AppId
@@ -284,6 +290,10 @@ function Set-TargetResource
         [Parameter()]
         [System.String[]]
         $ReplyURLs,
+
+        [Parameter()]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $AppRoles,
 
         [Parameter()]
         [System.String[]]
@@ -428,12 +438,27 @@ function Set-TargetResource
         {
             $webValue.Add('HomePageUrl', $currentParameters.Homepage)
         }
-
         $currentParameters.Add('web', $webValue)
     }
+
     $currentParameters.Remove('ReplyURLs') | Out-Null
     $currentParameters.Remove('LogoutURL') | Out-Null
     $currentParameters.Remove('Homepage') | Out-Null
+
+    # Loop through each app role
+    foreach ($appRole in $currentParameters.AppRoles)
+    {
+        # Start with a new ID
+        $id = New-Guid
+        # Find an app role with the same display name
+        [Array]$existing = $currentAADApp.AppRoles | Where-Object { $_.DisplayName -eq $appRole.DisplayName }
+        # Use the same ID if it exists
+        if ($existing.Length -gt 0)
+        {
+            $id = $existing[0].Id
+        }
+        $appRole | Add-Member -MemberType NoteProperty -Name Id -Value $id
+    }
 
     $skipToUpdate = $false
     $AppIdValue = $null
@@ -606,7 +631,7 @@ function Set-TargetResource
                     if ($null -eq $scope)
                     {
                         $ObjectGuid = [System.Guid]::empty
-                        if ([System.Guid]::TryParse($permission.Name,[System.Management.Automation.PSReference]$ObjectGuid))
+                        if ([System.Guid]::TryParse($permission.Name, [System.Management.Automation.PSReference]$ObjectGuid))
                         {
                             $scopeId = $permission.Name
                         }
@@ -629,7 +654,7 @@ function Set-TargetResource
                     if ($null -eq $role)
                     {
                         $ObjectGuid = [System.Guid]::empty
-                        if ([System.Guid]::TryParse($permission.Name,[System.Management.Automation.PSReference]$ObjectGuid))
+                        if ([System.Guid]::TryParse($permission.Name, [System.Management.Automation.PSReference]$ObjectGuid))
                         {
                             $roleId = $permission.Name
                         }
@@ -713,6 +738,10 @@ function Test-TargetResource
         [Parameter()]
         [System.String[]]
         $ReplyURLs,
+
+        [Parameter()]
+        [Microsoft.Management.Infrastructure.CimInstance[]]
+        $AppRoles,
 
         [Parameter()]
         [System.String[]]
@@ -801,6 +830,7 @@ function Test-TargetResource
         }
     }
     Write-Verbose -Message "Target Values: $(Convert-M365DscHashtableToString -Hashtable $PSBoundParameters)"
+    Write-Verbose -Message "Current Values: $(Convert-M365DscHashtableToString -Hashtable $CurrentValues)"
 
     $ValuesToCheck = $PSBoundParameters
     $ValuesToCheck.Remove('ObjectId') | Out-Null
@@ -927,7 +957,7 @@ function Export-TargetResource
             }
             catch
             {
-                if ($_.Exception.Message -like "*Multiple AAD Apps with the Displayname*")
+                if ($_.Exception.Message -like '*Multiple AAD Apps with the Displayname*')
                 {
                     Write-Host "`r`n        $($Global:M365DSCEmojiYellowCircle)" -NoNewline
                     Write-Host " Multiple app instances wth name {$($AADApp.DisplayName)} were found. We will skip exporting these instances."
@@ -979,7 +1009,7 @@ function Get-M365DSCAzureADAppPermissions
                 if ($null -eq $scopeInfo)
                 {
                     $ObjectGuid = [System.Guid]::empty
-                    if ([System.Guid]::TryParse($resourceAccess.Id,[System.Management.Automation.PSReference]$ObjectGuid))
+                    if ([System.Guid]::TryParse($resourceAccess.Id, [System.Management.Automation.PSReference]$ObjectGuid))
                     {
                         $scopeInfoValue = $resourceAccess.Id
                     }
@@ -1014,7 +1044,7 @@ function Get-M365DSCAzureADAppPermissions
                 if ($null -eq $role)
                 {
                     $ObjectGuid = [System.Guid]::empty
-                    if ([System.Guid]::TryParse($resourceAccess.Id,[System.Management.Automation.PSReference]$ObjectGuid))
+                    if ([System.Guid]::TryParse($resourceAccess.Id, [System.Management.Automation.PSReference]$ObjectGuid))
                     {
                         $roleValue = $resourceAccess.Id
                     }
