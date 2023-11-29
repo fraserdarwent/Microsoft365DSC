@@ -1,5 +1,32 @@
 # Change log for Microsoft365DSC
 
+# UNRELEASED
+
+* AADRoleSetting
+  * Export sorted by DisplayName for better comparison
+  * Enable Filter property to be used on export
+    FIXES [#3919](https://github.com/microsoft/Microsoft365DSC/issues/3919)
+* IntuneAccountProtectionLocalAdministratorPasswordSolutionPolicy,
+  IntuneAccountProtectionLocalUserGroupMembershipPolicy,
+  IntuneAccountProtectionPolicy,
+  * Fixes export if Assignments is set on existing policies
+    FIXES [3913](https://github.com/microsoft/Microsoft365DSC/issues/3913)
+  * Add groupDisplayName to Assignments embedded instance
+* DEPENDENCIES
+  * Updated DSCParser to version 1.4.0.1.
+  * Updated Microsoft.Graph to version 2.10.0.
+  * Updated MSCloudLoginAssistant to version 1.1.0.
+
+# 1.23.1122.1
+
+* SPOSharingSettings
+  * Fixes typo to re-enable export of ExternalUserExpireInDays and
+    ExternalUserExpirationRequired.
+* DEPENDENCIES
+  * Updated DSCParser to version 1.4.0.0.
+  * Updated Microsoft.Graph to version 2.9.1.
+  * Updated MicrosoftTeams to version 5.8.0.
+
 # 1.23.1115.1
 
 * AADApplication
