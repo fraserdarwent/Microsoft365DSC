@@ -450,11 +450,11 @@ function Set-TargetResource
     {
         # Start with a new ID
         $id = New-Guid
-        # Find an app role with the same display name
+        # Try to find an app role with the same display name
         [Array]$existing = $currentAADApp.AppRoles | Where-Object { $_.DisplayName -eq $appRole.DisplayName }
-        # Use the same ID if it exists
         if ($existing.Length -gt 0)
         {
+            # Use the same ID if one exists
             $id = $existing[0].Id
         }
         $appRole | Add-Member -MemberType NoteProperty -Name Id -Value $id
@@ -936,11 +936,17 @@ function Export-TargetResource
                     {
                         $Results.Permissions = Get-M365DSCAzureADAppPermissionsAsString $Results.Permissions
                     }
+                    $Results.AppRoles = Get-M365DSCAzureADAppRolesAsString $Results.AppRoles
                     $currentDSCBlock = Get-M365DSCExportContentForResource -ResourceName $ResourceName `
                         -ConnectionMode $ConnectionMode `
                         -ModulePath $PSScriptRoot `
                         -Results $Results `
                         -Credential $Credential
+
+                    if ($null -ne $Results.AppRoles)
+                    {
+                        $currentDSCBlock = Convert-DSCStringParamToVariable -DSCBlock $currentDSCBlock -ParameterName 'AppRoles'
+                    }
 
                     if ($null -ne $Results.Permissions)
                     {
@@ -1099,6 +1105,31 @@ function Get-M365DSCAzureADAppPermissionsAsString
         $StringContent += "                SourceAPI           = '" + $permission.SourceAPI + "'`r`n"
         $StringContent += "                AdminConsentGranted = `$" + $permission.AdminConsentGranted + "`r`n"
         $StringContent += "            }`r`n"
+    }
+    $StringContent += '            )'
+    return $StringContent
+}
+
+function Get-M365DSCAzureADAppRolesAsString
+{
+    [CmdletBinding()]
+    [OutputType([System.String])]
+    param(
+        [Parameter(Mandatory = $true)]
+        [System.Collections.ArrayList]
+        $AppRoles
+    )
+
+    $StringContent = '@('
+    foreach ($appRole in $AppRoles)
+    {
+        $StringContent += "MSFT_AADAppRole {`r`n"
+        $StringContent += "                AllowedMemberTypes  = '" + $appRole.AllowedMemberTypes + "'`r`n"
+        $StringContent += "                Description         = '" + $appRole.Description + "'`r`n"
+        $StringContent += "                DisplayName         = '" + $appRole.DisplayName + "'`r`n"
+        $StringContent += '                IsEnabled           = $' + $appRole.IsEnabled + "`r`n"
+        $StringContent += "                Value               = '" + $appRole.Value + "'`r`n"
+        $StringContent += "              }`r`n"
     }
     $StringContent += '            )'
     return $StringContent
